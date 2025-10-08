@@ -1,60 +1,48 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { signInUser } from "../../services/auth";
+import { FormEvent, useState } from "react";
+import { signUpUser } from "../../../../services/auth";
+import { useRouter } from "next/navigation";
 
-export default function Home() {
+export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
+  const router = useRouter();
 
-  const signIn = async (e: React.FormEvent) => {
+  const signUp = async (e: FormEvent) => {
     e.preventDefault();
+
     if (!email.trim() || !password.trim()) {
       setMessage("Please fill in all fields.");
       return;
     }
 
-    const result = await signInUser(email, password);
+    const result = await signUpUser(email, password);
     if (result?.error) {
-      return setMessage(result.error);
+      setMessage(result.error);
     } else {
-      setMessage("Log in successful!");
+      setMessage(
+        "Sign up successful! Please check your email to confirm your account."
+      );
+      setTimeout(() => {
+        router.replace("/auth/callback");
+      }, 2000);
     }
   };
 
   return (
     <div className="h-screen flex items-center justify-center bg-amber-950">
-      <div className=" max-w-[300px] w-[95%] py-12 rounded-lg px-6 bg-card flex flex-col bg-background">
-        <h2 className="font-bold text-3xl text-primary-text">Sign in to X</h2>
-        <button
-          className="bg-white w-full mt-8 h-10 flex justify-center items-center gap-2 cursor-pointer rounded-full hover:bg-gray-200"
-          type="submit"
-        >
-          <Image
-            src="/images/google-icon.png"
-            alt="google-icon"
-            className="w-6 h-6 object-cover"
-            width={470}
-            height={470}
-          />
-          <span>Sign in with google</span>
-        </button>
-
-        <div className="flex items-center my-6">
-          <div className="flex-grow h-px bg-border"></div>
-          <span className="mx-4 text-md text-primary-text">or</span>
-          <div className="flex-grow h-px bg-border"></div>
-        </div>
-
+      <div className=" max-w-[300px] w-[95%] py-12 rounded-lg px-6 bg-card flex flex-col bg-background mb-12">
+        <h2 className="font-bold text-3xl text-primary-text mb-12">
+          Sign up to X
+        </h2>
         {message && (
           <p className="bg-primary py-1 mb-4 font-semibold text-center">
             {message}
           </p>
         )}
-
-        <form onSubmit={signIn}>
+        <form onSubmit={signUp}>
           <input
             type="text"
             placeholder="Email"
@@ -74,18 +62,14 @@ export default function Home() {
             Continue
           </button>
         </form>
-
-        <button className="text-white w-full mt-8 rounded-full h-10  flex justify-center items-center gap-2 cursor-pointer  hover:bg-gray-200 font-semibold border border-border hover:text-black">
-          Forgot password?
-        </button>
         <div className="text-secondary-text mt-8">
-          <span className="mr-1">Don&apos;t have an account?</span>
+          <span className="mr-1">Already have an account?</span>
 
           <Link
-            href="/auth/signup"
+            href="/"
             className="text-primary hover:underline"
           >
-            Sign up
+            Sign in
           </Link>
         </div>
       </div>

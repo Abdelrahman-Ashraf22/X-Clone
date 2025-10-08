@@ -2,7 +2,7 @@ import CreatePost from "@/component/CreatePost";
 import Posts from "@/component/Posts";
 import React from "react";
 
-export default function page() {
+export default function Page() {
   return (
     <div className="">
       <div className="border border-border h-14 grid grid-cols-2 text-white">

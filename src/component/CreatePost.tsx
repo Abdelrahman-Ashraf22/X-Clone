@@ -7,8 +7,10 @@ import { IoLocationOutline } from "react-icons/io5";
 import { RiCalendarScheduleLine } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
 import { TbPhoto } from "react-icons/tb";
+import { useGetUser } from "../../hooks/useGetUser";
 
 export default function CreatePost() {
+  const { profile, session, loading } = useGetUser();
   //showing the text area value
   const [post, setPost] = useState("");
   // the img preview state
@@ -41,10 +43,13 @@ export default function CreatePost() {
     setPost((prev) => prev + emojiData.emoji);
   };
 
+  if (!session) return null;
+  if (loading) return <h2 className="text-2xl  text-white">Loading...</h2>;
+
   return (
     <div className="flex gap-4 p-4 border border-border">
       <Image
-        src="/images/profile.jpg"
+        src={profile?.avatar_url || "/default-avatar.png"}
         alt="profile-pic"
         width={500}
         height={500}
