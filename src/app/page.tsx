@@ -1,13 +1,16 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signInUser } from "../../services/auth";
+import { useRouter } from "next/navigation";
+import { supabase } from "../../lib/supabase";
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
+  const router = useRouter();
 
   const signIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,9 +24,20 @@ export default function Home() {
       return setMessage(result.error);
     } else {
       setMessage("Log in successful!");
+      setTimeout(() => {
+        router.replace("/auth/callback");
+      }, 2000);
     }
   };
 
+  // redirect to callback if user is already logged in
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: session }) => {
+      if (session) {
+        router.replace("/auth/callback");
+      }
+    });
+  }, [router]);
   return (
     <div className="h-screen flex items-center justify-center bg-amber-950">
       <div className=" max-w-[300px] w-[95%] py-12 rounded-lg px-6 bg-card flex flex-col bg-background">

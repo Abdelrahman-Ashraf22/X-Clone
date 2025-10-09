@@ -44,17 +44,20 @@ export default function CreatePost() {
   };
 
   if (!session) return null;
+  if (!profile) return null;
   if (loading) return <h2 className="text-2xl  text-white">Loading...</h2>;
 
   return (
     <div className="flex gap-4 p-4 border border-border">
-      <Image
-        src={profile?.avatar_url || "/default-avatar.png"}
-        alt="profile-pic"
-        width={500}
-        height={500}
-        className="w-10 h-10 object-cover rounded-full shrink-0"
-      />
+      {profile?.avatar_url && (
+        <Image
+          src={profile?.avatar_url || "/default-avatar.png"}
+          alt="profile-pic"
+          width={500}
+          height={500}
+          className="w-10 h-10 object-cover rounded-full shrink-0"
+        />
+      )}
 
       <div className="w-full">
         <textarea

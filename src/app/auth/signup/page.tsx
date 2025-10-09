@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { signUpUser } from "../../../../services/auth";
 import { useRouter } from "next/navigation";
+import { supabase } from "../../../../lib/supabase";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -30,6 +31,15 @@ export default function SignUp() {
       }, 2000);
     }
   };
+
+  // redirect to callback if user is already logged in
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: session }) => {
+      if (session) {
+        router.replace("/auth/callback");
+      }
+    });
+  }, [router]);
 
   return (
     <div className="h-screen flex items-center justify-center bg-amber-950">

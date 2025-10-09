@@ -12,6 +12,7 @@ export default function Page() {
   const [username, setUsername] = useState("");
   const [message, setMessage] = useState("");
   const [user, setUser] = useState<null | User>(null);
+  const [isChecking, setIsChecking] = useState(true);
 
   const router = useRouter();
   const submitUserProfile = async (e: React.FormEvent) => {
@@ -87,10 +88,16 @@ export default function Page() {
 
       if (profile) {
         router.replace("/home");
+        return;
       }
+      // if no profile, stay on this page to set up profile
+      setIsChecking(false);
     };
     handleAuth();
   }, [router]);
+
+  if (isChecking)
+    return <h2 className="text-white text-xl">Checking Profile...</h2>;
   return (
     <div className="h-screen flex items-center justify-center bg-amber-950">
       <div className=" max-w-[300px] w-[95%] py-12 rounded-lg px-6 bg-card flex flex-col bg-background mb-12">

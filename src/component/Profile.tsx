@@ -7,6 +7,7 @@ import { useGetUser } from "../../hooks/useGetUser";
 export default function Profile() {
   const { session, profile, loading } = useGetUser();
   if (!session) return null;
+  if (!profile) return null;
   if (loading) return <h2 className="text-2xl  text-white">Loading...</h2>;
 
   return (
