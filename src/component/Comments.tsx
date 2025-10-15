@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -5,8 +6,13 @@ import { BsThreeDots } from "react-icons/bs";
 import { FaRegComment, FaRegHeart } from "react-icons/fa6";
 import { FiRepeat } from "react-icons/fi";
 import { IoIosBookmark, IoIosStats } from "react-icons/io";
+import { useGetComments } from "../../hooks/useComment";
 
-export default function Comments() {
+export default function Comments({ tweetId }: { tweetId: string }) {
+  const { error, isError, isLoading, data: comments } = useGetComments(tweetId);
+
+  if (isLoading) return <h1 className="">Loading...</h1>;
+  if (isError) return <h1>{error.message}</h1>;
   return (
     <div>
       <div className="px-4 py-2 flex gap-3 border-b border-border">

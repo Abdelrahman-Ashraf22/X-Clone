@@ -1,5 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createTweet } from "../services/tweet";
+"use client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createTweet, deleteTweet, getTweets } from "../services/tweet";
 
 export const usePostTweet = () => {
   //
@@ -19,6 +20,29 @@ export const usePostTweet = () => {
     //
     onSuccess: () => {
       queryClinet.invalidateQueries({ queryKey: ["tweets"] });
+    },
+  });
+};
+
+export const useGetTweets = () => {
+  return useQuery({
+    queryKey: ["tweets"],
+    queryFn: getTweets,
+  });
+};
+
+export const useDeleteTweet = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      tweetId,
+      imagePath,
+    }: {
+      tweetId: string;
+      imagePath?: string;
+    }) => deleteTweet(tweetId, imagePath),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tweets"] });
     },
   });
 };

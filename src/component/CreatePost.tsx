@@ -8,6 +8,7 @@ import { RiCalendarScheduleLine } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
 import { TbPhoto } from "react-icons/tb";
 import { useGetUser } from "../../hooks/useGetUser";
+import { usePostTweet } from "../../hooks/useTweet";
 
 export default function CreatePost() {
   const { profile, session, loading } = useGetUser();
@@ -21,12 +22,15 @@ export default function CreatePost() {
   const isDisabled = post.trim() === "" && !imagePreview;
   // create a ref for the file input
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const [tweetImage, setTweetImage] = useState<File | null>(null);
+  const { mutate, isPending } = usePostTweet();
 
   // function to handle the file change
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setImagePreview(URL.createObjectURL(file));
+      setTweetImage(file);
     }
   };
 
@@ -35,6 +39,7 @@ export default function CreatePost() {
     setImagePreview(null);
     if (fileRef.current) {
       fileRef.current.value = "";
+      setTweetImage(null);
     }
   };
 
@@ -43,12 +48,46 @@ export default function CreatePost() {
     setPost((prev) => prev + emojiData.emoji);
   };
 
+  const PostTweet = () => {
+    // if there is no text and no image then return
+    if (!post.trim() && !tweetImage) return;
+    // if there is no session or no user id then return
+    if (!session?.user.id) return;
+
+    // call the mutate function to create a new tweet
+    mutate(
+      {
+        userId: session.user.id,
+        content: post || null,
+        tweetImage: tweetImage || null,
+      },
+      {
+        // onsuccess clear the text area and the image preview
+        onSuccess: () => {
+          setPost("");
+          setImagePreview(null);
+          setTweetImage(null);
+        },
+        // onerror log the error message
+        onError: (error) => {
+          console.log("Error creating tweet:", error.message);
+        },
+      }
+    );
+  };
+
+  // if there is no session or no profile return null
   if (!session) return null;
   if (!profile) return null;
+  // if loading return loading
   if (loading) return <h2 className="text-2xl  text-white">Loading...</h2>;
 
   return (
-    <div className="flex gap-4 p-4 border border-border">
+    <div
+      className={`flex gap-4 p-4 border border-border ${
+        isPending ? "opacity-30" : ""
+      }`}
+    >
       {profile?.avatar_url && (
         <Image
           src={profile?.avatar_url || "/default-avatar.png"}
@@ -115,7 +154,10 @@ export default function CreatePost() {
               Post
             </button>
           ) : (
-            <button className="text-black bg-white py-2 px-5 font-semibold cursor-pointer rounded-full">
+            <button
+              onClick={PostTweet}
+              className="text-black bg-white py-2 px-5 font-semibold cursor-pointer rounded-full"
+            >
               Post
             </button>
           )}

@@ -30,14 +30,14 @@ export default function Home() {
     }
   };
 
-  // redirect to callback if user is already logged in
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: session }) => {
-      if (session) {
-        router.replace("/auth/callback");
-      }
-    });
-  }, [router]);
+  // // redirect to callback if user is already logged in
+  // useEffect(() => {
+  //   supabase.auth.getSession().then(({ data: session }) => {
+  //     if (session) {
+  //       router.replace("/auth/callback");
+  //     }
+  //   });
+  // }, [router]);
   return (
     <div className="h-screen flex items-center justify-center bg-amber-950">
       <div className=" max-w-[300px] w-[95%] py-12 rounded-lg px-6 bg-card flex flex-col bg-background">

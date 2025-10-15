@@ -33,13 +33,13 @@ export default function SignUp() {
   };
 
   // redirect to callback if user is already logged in
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: session }) => {
-      if (session) {
-        router.replace("/auth/callback");
-      }
-    });
-  }, [router]);
+  // useEffect(() => {
+  //   supabase.auth.getSession().then(({ data: session }) => {
+  //     if (session) {
+  //       router.replace("/auth/callback");
+  //     }
+  //   });
+  // }, [router]);
 
   return (
     <div className="h-screen flex items-center justify-center bg-amber-950">

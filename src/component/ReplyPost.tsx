@@ -7,13 +7,19 @@ import { IoLocationOutline } from "react-icons/io5";
 import { RiCalendarScheduleLine } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
 import { TbPhoto } from "react-icons/tb";
+import { useUserSession } from "../../hooks/useUserSession";
+import { useCreateComment } from "../../hooks/useComment";
 
-export default function ReplyPost() {
+export default function ReplyPost({ tweetId }: { tweetId: string }) {
   const [replyPost, setReplyPost] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const isDisabled = replyPost.trim() === "" && !imagePreview;
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const { mutate, isPending } = useCreateComment();
+
+  const { session } = useUserSession();
+  const userId = session?.user.id;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -34,8 +40,26 @@ export default function ReplyPost() {
     setReplyPost((prev) => prev + emojiData.emoji);
   };
 
+  const PostComment = () => {
+    if (!replyPost.trim()) return;
+    if (!userId) return;
+    mutate(
+      {
+        userId,
+        tweetId,
+        content: replyPost,
+      },
+      {
+        onSuccess: () => {
+          setReplyPost("");
+        },
+      }
+    );
+  };
+
+  if (!session) return null;
   return (
-    <div className="flex gap-4 p-4 border border-border">
+    <div className={`flex gap-4 p-4 border border-border ${isPending ? "opacity-30":"" }`}>
       <Image
         src="/images/profile.jpg"
         alt="profile-pic"
@@ -100,7 +124,10 @@ export default function ReplyPost() {
               Post
             </button>
           ) : (
-            <button className="text-black bg-white py-2 px-5 font-semibold cursor-pointer rounded-full">
+            <button
+              onClick={PostComment}
+              className="text-black bg-white py-2 px-5 font-semibold cursor-pointer rounded-full"
+            >
               Post
             </button>
           )}

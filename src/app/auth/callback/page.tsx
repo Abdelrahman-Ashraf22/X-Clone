@@ -68,7 +68,7 @@ export default function Page() {
       } = await supabase.auth.getUser();
 
       if (userError || !user) {
-        router.replace("/auth/signup");
+        // router.replace("/auth/signup");
         return;
       }
 
