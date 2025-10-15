@@ -1,12 +1,12 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { FaRegComment, FaRegHeart } from "react-icons/fa6";
-import { FiRepeat } from "react-icons/fi";
-import { IoIosBookmark, IoIosStats } from "react-icons/io";
+
 import { useGetComments } from "../../hooks/useComment";
+import { Comment } from "../../types/Types";
+import moment from "moment";
+import CommentAction from "./CommentAction";
 
 export default function Comments({ tweetId }: { tweetId: string }) {
   const { error, isError, isLoading, data: comments } = useGetComments(tweetId);
@@ -15,64 +15,44 @@ export default function Comments({ tweetId }: { tweetId: string }) {
   if (isError) return <h1>{error.message}</h1>;
   return (
     <div>
-      <div className="px-4 py-2 flex gap-3 border-b border-border">
-        <Image
-          src="/images/profile.jpg"
-          alt="profile-pic"
-          width={100}
-          height={100}
-          className="w-10 h-10 object-cover rounded-full shrink-0"
-        />
-        <div className="w-full">
-          <div className="flex justify-between gap-1 text-sm">
-            <div className="flex items-center gap-1">
-              <span className="text-white font-bold">Omar Khaled</span>
-              <span className="text-secondary-text">@omar</span>
-              <span className="text-secondary-text">3h</span>
-            </div>
-            <BsThreeDots className="text-white cursor-pointer" />
-          </div>
-          <div className="text-white my-2 block">
-            Stars can&apos;t shine without darkness.
-          </div>
-
-          {/* <Link href="">
+      {comments?.map((comment: Comment) => {
+        return (
+          <div
+            key={comment.id}
+            className="px-4 py-2 flex gap-3 border-b border-border"
+          >
             <Image
-              src="/images/post1.jpg"
-              alt="post-img"
-              width={1800}
-              height={1800}
-              className="h-70 md:h-130 w-full rounded-lg border border-border object-cover"
+              src={comment.profiles.avatar_url}
+              alt="profile-pic"
+              width={100}
+              height={100}
+              className="w-10 h-10 object-cover rounded-full shrink-0"
             />
-          </Link> */}
-
-          <div className="flex justify-between my-4   ">
-            <div className="text-secondary-text flex items-center gap-1 hover:text-blue-400 cursor-pointer  ">
-              <FaRegComment />
-              <span className="text-sm">1.1K</span>
-            </div>
-
-            <div className="text-secondary-text flex items-center gap-1 hover:text-blue-400 cursor-pointer">
-              <FiRepeat />
-              <span className="text-sm">4.5K</span>
-            </div>
-
-            <div className="text-secondary-text flex items-center gap-1 hover:text-blue-400 cursor-pointer">
-              <FaRegHeart />
-              <span className="text-sm">2.4K</span>
-            </div>
-
-            <div className="text-secondary-text flex items-center gap-1 hover:text-blue-400 cursor-pointer">
-              <IoIosStats />
-              <span className="text-sm">10K</span>
-            </div>
-
-            <div className="text-secondary-text flex items-center gap-1 hover:text-blue-400 cursor-pointer">
-              <IoIosBookmark size={20} />
+            <div className="w-full">
+              <div className="flex justify-between gap-1 text-sm">
+                <div className="flex items-center gap-1">
+                  <span className="text-white font-bold">
+                    {comment.profiles.name}
+                  </span>
+                  <span className="text-secondary-text">
+                    @{comment.profiles.username}
+                  </span>
+                  <span className="text-secondary-text">
+                    {moment(comment.created_at).fromNow()}
+                  </span>
+                </div>
+                <BsThreeDots className="text-white cursor-pointer" />
+              </div>
+              <div className="text-white my-2 block">{comment.content}</div>
+              <CommentAction
+                creatorId={comment.profiles.id}
+                tweetId={tweetId}
+                commentId={comment.id}
+              />
             </div>
           </div>
-        </div>
-      </div>
+        );
+      })}
     </div>
   );
 }

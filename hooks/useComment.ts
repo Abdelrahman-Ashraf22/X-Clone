@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createComment,
+  deleteComment,
   getComments,
   // deleteComment,
   // getComments,
@@ -40,26 +41,26 @@ export const useGetComments = (tweetId: string) => {
   });
 };
 
-// export const useDeleteComment = () => {
-//   const queryClient = useQueryClient();
-//   return useMutation({
-//     mutationFn: ({
-//       tweetId,
-//       commentId,
-//     }: {
-//       tweetId: string;
-//       commentId: string;
-//     }) => deleteComment(commentId),
-//     onSuccess: (data, variables) => {
-//       queryClient.invalidateQueries({
-//         queryKey: ["comments", variables.tweetId],
-//       });
-//       queryClient.invalidateQueries({
-//         queryKey: ["comments-count", variables.tweetId],
-//       });
-//     },
-//   });
-// };
+export const useDeleteComment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      tweetId,
+      commentId,
+    }: {
+      tweetId: string;
+      commentId: string;
+    }) => deleteComment(commentId),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["comments", variables.tweetId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["comments-count", variables.tweetId],
+      });
+    },
+  });
+};
 
 // export const useCommentsCount = (tweetId: string) => {
 //   return useQuery({
