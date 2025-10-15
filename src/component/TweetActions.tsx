@@ -7,6 +7,7 @@ import { IoIosBookmark, IoIosStats } from "react-icons/io";
 import { useUserSession } from "../../hooks/useUserSession";
 import { useDeleteTweet } from "../../hooks/useTweet";
 import { useRouter } from "next/navigation";
+import { useCommentsCount } from "../../hooks/useComment";
 
 type TweetActionProp = {
   creatorId: string;
@@ -25,6 +26,7 @@ export default function TweetActions({
   const userId = session?.user.id;
   const { mutate } = useDeleteTweet();
   const router = useRouter();
+  const { data: CommentCount } = useCommentsCount(tweetId);
 
   const handleDeleteTweet = () => {
     mutate(
@@ -46,7 +48,7 @@ export default function TweetActions({
     <div className="flex justify-between my-4">
       <div className="text-secondary-text flex items-center gap-1 hover:text-blue-400 cursor-pointer">
         <FaRegComment />
-        <span className="text-sm">1.1K</span>
+        <span className="text-sm">{CommentCount}</span>
       </div>
 
       {creatorId === userId ? (

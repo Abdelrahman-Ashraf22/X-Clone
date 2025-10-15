@@ -5,6 +5,7 @@ import {
   createComment,
   deleteComment,
   getComments,
+  getCommentsCount,
   // deleteComment,
   // getComments,
   // getCommentsCount,
@@ -56,16 +57,17 @@ export const useDeleteComment = () => {
         queryKey: ["comments", variables.tweetId],
       });
       queryClient.invalidateQueries({
+        // revalidate to update the counts immediately
         queryKey: ["comments-count", variables.tweetId],
       });
     },
   });
 };
 
-// export const useCommentsCount = (tweetId: string) => {
-//   return useQuery({
-//     queryFn: () => getCommentsCount(tweetId),
-//     queryKey: ["comments-count", tweetId],
-//     enabled: !!tweetId,
-//   });
-// };
+export const useCommentsCount = (tweetId: string) => {
+  return useQuery({
+    queryFn: () => getCommentsCount(tweetId),
+    queryKey: ["comments-count", tweetId],
+    enabled: !!tweetId,
+  });
+};

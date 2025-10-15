@@ -45,3 +45,17 @@ export const deleteComment = async (commentId: string) => {
     throw new Error(error.message);
   }
 };
+
+// the length of the whole comments
+export const getCommentsCount = async (tweetId: string) => {
+  const { error, count } = await supabase
+    .from("comments")
+    .select("id", { head: true, count: "exact" })
+    .eq("tweet_id", tweetId);
+
+  if (error) {
+    console.log("commentsCountError:", error.message);
+  }
+
+  return count ?? 0;
+};
